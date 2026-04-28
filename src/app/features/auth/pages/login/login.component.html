@@ -1,0 +1,58 @@
+<div class="login-page">
+  <section class="login-hero">
+    <div class="brand-mark">MP</div>
+
+    <div>
+      <span class="eyebrow">MarketPulse Terminal</span>
+      <h1>Enter your financial workspace</h1>
+      <p>
+        Practice Angular with a clean market terminal: watchlists, portfolio
+        simulation, risk panels and real API data.
+      </p>
+    </div>
+  </section>
+
+  <section class="login-card">
+    <div class="card-header">
+      <p>Fake auth</p>
+      <h2>Sign in</h2>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="trader@marketpulse.dev"
+        />
+      </label>
+
+      <label>
+        Password
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Minimum 4 characters"
+        />
+      </label>
+
+      @if (errorMessage()) {
+        <div class="error-message">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <button type="submit">
+        Access terminal
+      </button>
+    </form>
+
+    <div class="hint-box">
+      <strong>Demo credentials</strong>
+      <span>Use any email and password with 4+ characters.</span>
+    </div>
+  </section>
+</div>

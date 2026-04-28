@@ -1,0 +1,88 @@
+<div class="terminal-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">MP</div>
+
+      <div>
+        <h1>MarketPulse</h1>
+        <span>Terminal</span>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <a
+        class="nav-link"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/watchlist"
+        routerLinkActive="active"
+      >
+        <span>⭐</span>
+        Watchlist
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/portfolio"
+        routerLinkActive="active"
+      >
+        <span>💼</span>
+        Portfolio
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/risk-center"
+        routerLinkActive="active"
+      >
+        <span>🛡️</span>
+        Risk Center
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/settings"
+        routerLinkActive="active"
+      >
+        <span>⚙️</span>
+        Settings
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <p>Financial Markets Console</p>
+        <h2>MarketPulse Terminal</h2>
+      </div>
+
+      <!-- <div class="user-chip">
+        <span class="status-dot"></span>
+        Fake session
+      </div> -->
+      <div class="user-actions">
+        <div class="user-chip">
+          <span class="status-dot"></span>
+          {{ user()?.name || 'Fake session' }}
+        </div>
+
+        <button type="button" class="logout-button" (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <section class="page-content">
+      <router-outlet />
+    </section>
+  </main>
+</div>

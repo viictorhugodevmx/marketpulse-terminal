@@ -1,20 +1,160 @@
-<div class="feature-page">
+<div class="portfolio-page">
   <section class="page-hero">
     <div>
       <span class="eyebrow">Portfolio lab</span>
       <h2>Portfolio Simulator</h2>
       <p>
-        Create simulated positions, calculate market value and track unrealized PnL.
+        Create simulated positions, calculate market value and track unrealized PnL
+        with real market quotes.
       </p>
     </div>
 
-    <button type="button">New position soon</button>
+    <button type="button" (click)="refreshPrices()" [disabled]="!hasPositions()">
+      Refresh prices
+    </button>
   </section>
 
-  <section class="empty-panel">
-    <h3>No positions yet</h3>
-    <p>
-      We will use real quotes and localStorage to simulate a clean trading portfolio.
-    </p>
+  <section class="summary-grid">
+    <article class="summary-card">
+      <p>Total Cost</p>
+      <strong>{{ formatMoney(totalCost()) }}</strong>
+      <span>Original invested amount</span>
+    </article>
+
+    <article class="summary-card">
+      <p>Market Value</p>
+      <strong>{{ formatMoney(totalMarketValue()) }}</strong>
+      <span>Current simulated value</span>
+    </article>
+
+    <article class="summary-card">
+      <p>Unrealized PnL</p>
+      <strong [class.positive]="totalPnl() >= 0" [class.negative]="totalPnl() < 0">
+        {{ formatMoney(totalPnl()) }}
+      </strong>
+      <span [class.positive]="totalPnlPercent() >= 0" [class.negative]="totalPnlPercent() < 0">
+        {{ formatPercent(totalPnlPercent()) }}
+      </span>
+    </article>
+  </section>
+
+  <section class="form-panel">
+    <div class="panel-header">
+      <div>
+        <h3>Add Position</h3>
+        <span>Use a real symbol and your simulated entry price</span>
+      </div>
+    </div>
+
+    <form class="position-form" (ngSubmit)="addPosition()">
+      <label>
+        Symbol
+        <input
+          type="text"
+          name="symbol"
+          [(ngModel)]="symbol"
+          placeholder="AAPL, MSFT, TSLA"
+        />
+      </label>
+
+      <label>
+        Quantity
+        <input
+          type="number"
+          name="quantity"
+          [(ngModel)]="quantity"
+          placeholder="10"
+        />
+      </label>
+
+      <label>
+        Average Price
+        <input
+          type="number"
+          name="averagePrice"
+          [(ngModel)]="averagePrice"
+          placeholder="150"
+        />
+      </label>
+
+      <button type="submit" [disabled]="formLoading()">
+        {{ formLoading() ? 'Loading quote...' : 'Add position' }}
+      </button>
+    </form>
+
+    @if (formError()) {
+      <div class="inline-error">
+        {{ formError() }}
+      </div>
+    }
+  </section>
+
+  <section class="positions-panel">
+    <div class="panel-header">
+      <div>
+        <h3>Positions</h3>
+        <span>{{ positions().length }} active positions</span>
+      </div>
+    </div>
+
+    @if (positions().length) {
+      <div class="positions-table">
+        <div class="table-row table-head">
+          <span>Symbol</span>
+          <span>Qty</span>
+          <span>Avg Price</span>
+          <span>Current</span>
+          <span>Market Value</span>
+          <span>PnL</span>
+          <span></span>
+        </div>
+
+        @for (position of positions(); track position.id) {
+          <div class="table-row">
+            <span class="symbol-cell">
+              <strong>{{ position.symbol }}</strong>
+              <small>{{ position.name || 'N/A' }}</small>
+            </span>
+
+            <span>{{ position.quantity }}</span>
+            <span>{{ formatMoney(position.averagePrice) }}</span>
+
+            <span>
+              @if (position.loading) {
+                Loading...
+              } @else {
+                {{ formatMoney(position.currentPrice || position.averagePrice) }}
+              }
+            </span>
+
+            <span>{{ formatMoney(getMarketValue(position)) }}</span>
+
+            <span [class.positive]="getPnl(position) >= 0" [class.negative]="getPnl(position) < 0">
+              {{ formatMoney(getPnl(position)) }}
+              <small>{{ formatPercent(getPnlPercent(position)) }}</small>
+            </span>
+
+            <button
+              type="button"
+              class="remove-button"
+              (click)="removePosition(position.id)"
+            >
+              Remove
+            </button>
+
+            @if (position.error) {
+              <small class="row-error">{{ position.error }}</small>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-panel">
+        <h3>No positions yet</h3>
+        <p>
+          Add a simulated position to start tracking portfolio value and PnL.
+        </p>
+      </div>
+    }
   </section>
 </div>

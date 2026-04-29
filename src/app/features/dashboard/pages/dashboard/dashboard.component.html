@@ -48,6 +48,26 @@
         <span>Preview</span>
       </div>
 
+      <div class="api-test-box">
+        <button type="button" (click)="loadTestQuote()" [disabled]="testLoading()">
+          {{ testLoading() ? 'Loading AAPL...' : 'Test Twelve Data API' }}
+        </button>
+
+        @if (testQuote()) {
+          <div class="api-result">
+            <strong>{{ testQuote()?.symbol }}</strong>
+            <span>Close: {{ testQuote()?.close || 'N/A' }}</span>
+            <span>Change: {{ testQuote()?.percent_change || 'N/A' }}%</span>
+          </div>
+        }
+
+        @if (testError()) {
+          <div class="api-error">
+            {{ testError() }}
+          </div>
+        }
+      </div>
+
       <div class="placeholder-list">
         <div>
           <strong>AAPL</strong>

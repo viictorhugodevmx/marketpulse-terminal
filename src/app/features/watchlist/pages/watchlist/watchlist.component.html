@@ -4,17 +4,130 @@
       <span class="eyebrow">Market monitor</span>
       <h2>Watchlist</h2>
       <p>
-        Search instruments, track live quotes and persist your favorite symbols locally.
+        Search instruments, track real quotes and persist your favorite symbols locally.
       </p>
     </div>
 
-    <button type="button">Add symbol soon</button>
+    <button type="button" (click)="refreshAllQuotes()">
+      Refresh quotes
+    </button>
   </section>
 
-  <section class="empty-panel">
-    <h3>No symbols yet</h3>
-    <p>
-      In the next steps we will connect Twelve Data and build a real market watchlist.
-    </p>
+  <section class="search-panel">
+    <div class="search-box">
+      <label>
+        Search symbol
+        <div class="search-row">
+          <input
+            type="text"
+            name="searchTerm"
+            [(ngModel)]="searchTerm"
+            placeholder="Try AAPL, MSFT, BTC/USD or EUR/USD"
+            (keyup.enter)="searchSymbols()"
+          />
+
+          <button type="button" (click)="searchSymbols()" [disabled]="searchLoading()">
+            {{ searchLoading() ? 'Searching...' : 'Search' }}
+          </button>
+        </div>
+      </label>
+    </div>
+
+    @if (searchError()) {
+      <div class="inline-message">
+        {{ searchError() }}
+      </div>
+    }
+
+    @if (searchResults().length) {
+      <div class="results-grid">
+        @for (result of searchResults(); track result.symbol + result.exchange) {
+          <article class="result-card">
+            <div>
+              <strong>{{ result.symbol }}</strong>
+              <p>{{ result.instrument_name }}</p>
+              <span>{{ result.exchange }} · {{ result.currency }}</span>
+            </div>
+
+            <button type="button" (click)="addToWatchlist(result)">
+              Add
+            </button>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="table-panel">
+    <div class="panel-header">
+      <div>
+        <h3>Your Watchlist</h3>
+        <span>{{ watchlist().length }} symbols tracked</span>
+      </div>
+    </div>
+
+    @if (watchlist().length) {
+      <div class="market-table">
+        <div class="table-row table-head">
+          <span>Symbol</span>
+          <span>Name</span>
+          <span>Price</span>
+          <span>Change</span>
+          <span>Status</span>
+          <span></span>
+        </div>
+
+        @for (item of watchlist(); track item.symbol) {
+          <div class="table-row">
+            <span class="symbol-cell">
+              <strong>{{ item.symbol }}</strong>
+              <small>{{ item.exchange || 'N/A' }}</small>
+            </span>
+
+            <span>{{ item.name }}</span>
+
+            <span>
+              @if (item.loading) {
+                Loading...
+              } @else {
+                {{ item.close || 'N/A' }}
+              }
+            </span>
+
+            <span
+              [class.positive]="(item.percentChange || '').startsWith('0') || (item.percentChange || '').startsWith('1') || (item.percentChange || '').startsWith('2') || (item.percentChange || '').startsWith('3') || (item.percentChange || '').startsWith('4') || (item.percentChange || '').startsWith('5') || (item.percentChange || '').startsWith('6') || (item.percentChange || '').startsWith('7') || (item.percentChange || '').startsWith('8') || (item.percentChange || '').startsWith('9')"
+              [class.negative]="(item.percentChange || '').startsWith('-')"
+            >
+              {{ item.percentChange ? item.percentChange + '%' : 'N/A' }}
+            </span>
+
+            <span>
+              @if (item.error) {
+                <small class="error-text">{{ item.error }}</small>
+              } @else if (item.isMarketOpen) {
+                <small class="open-text">Open</small>
+              } @else {
+                <small class="closed-text">Closed</small>
+              }
+            </span>
+
+            <button
+              type="button"
+              class="remove-button"
+              (click)="removeFromWatchlist(item.symbol)"
+            >
+              Remove
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-panel">
+        <h3>No symbols yet</h3>
+        <p>
+          Search and add instruments to start building your market watchlist.
+        </p>
+      </div>
+    }
   </section>
 </div>

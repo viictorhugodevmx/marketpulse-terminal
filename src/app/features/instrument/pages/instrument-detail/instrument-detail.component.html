@@ -1,0 +1,167 @@
+<div class="detail-page">
+  <section class="detail-hero">
+    <div>
+      <a routerLink="/watchlist" class="back-link">← Back to Watchlist</a>
+
+      <span class="eyebrow">Instrument detail</span>
+
+      <h2>{{ symbol() }}</h2>
+
+      <p>
+        Real quote and recent daily time series from Twelve Data.
+      </p>
+    </div>
+
+    <button type="button" (click)="reload()" [disabled]="loading()">
+      {{ loading() ? 'Loading...' : 'Refresh detail' }}
+    </button>
+  </section>
+
+  @if (errorMessage()) {
+    <div class="state-message error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="state-message">
+      Loading market data...
+    </div>
+  }
+
+  @if (quote()) {
+    <section class="quote-grid">
+      <article class="quote-card main-price">
+        <p>Last Close</p>
+        <strong>{{ latestClose() }}</strong>
+        <span
+          [class.positive]="isPositive()"
+          [class.negative]="isNegative()"
+        >
+          {{ percentChange() }}%
+        </span>
+      </article>
+
+      <article class="quote-card">
+        <p>Name</p>
+        <strong>{{ quote()?.name || 'N/A' }}</strong>
+        <span>{{ quote()?.exchange || 'N/A' }}</span>
+      </article>
+
+      <article class="quote-card">
+        <p>Session Range</p>
+        <strong>{{ quote()?.low || 'N/A' }} - {{ quote()?.high || 'N/A' }}</strong>
+        <span>Open: {{ quote()?.open || 'N/A' }}</span>
+      </article>
+
+      <article class="quote-card">
+        <p>Market Status</p>
+
+        @if (quote()?.is_market_open) {
+          <strong class="positive">Open</strong>
+        } @else {
+          <strong>Closed</strong>
+        }
+
+        <span>{{ quote()?.currency || 'N/A' }}</span>
+      </article>
+    </section>
+  }
+
+  <section class="chart-panel">
+    <div class="panel-header">
+      <div>
+        <h3>Price Chart</h3>
+        <span>Last {{ history().length }} daily closes</span>
+      </div>
+
+      <div class="chart-range">
+        <span>Min {{ chartMin() }}</span>
+        <span>Max {{ chartMax() }}</span>
+      </div>
+    </div>
+
+    @if (chartPath()) {
+      <div class="chart-box">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Price chart">
+          <defs>
+            <linearGradient id="priceGlow" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#28f7a5" />
+              <stop offset="100%" stop-color="#6ee7ff" />
+            </linearGradient>
+          </defs>
+
+          <path class="grid-line" d="M 0 18 L 100 18" />
+          <path class="grid-line" d="M 0 50 L 100 50" />
+          <path class="grid-line" d="M 0 82 L 100 82" />
+
+          <path class="price-line-shadow" [attr.d]="chartPath()" />
+          <path class="price-line" [attr.d]="chartPath()" />
+
+          @for (point of chartPoints(); track point.date) {
+            <circle
+              class="price-point"
+              [attr.cx]="point.x"
+              [attr.cy]="point.y"
+              r="1.3"
+            />
+          }
+        </svg>
+      </div>
+
+      <div class="chart-labels">
+        @if (chartPoints().length) {
+          <span>{{ chartPoints()[0].date }}</span>
+          <span>{{ chartPoints()[chartPoints().length - 1].date }}</span>
+        }
+      </div>
+    } @else {
+      <div class="empty-panel compact">
+        <h3>No chart data</h3>
+        <p>
+          Historical prices are required to render the price chart.
+        </p>
+      </div>
+    }
+  </section>
+
+  <section class="history-panel">
+    <div class="panel-header">
+      <div>
+        <h3>Recent Daily History</h3>
+        <span>{{ history().length }} rows loaded</span>
+      </div>
+    </div>
+
+    @if (history().length) {
+      <div class="history-table">
+        <div class="table-row table-head">
+          <span>Date</span>
+          <span>Open</span>
+          <span>High</span>
+          <span>Low</span>
+          <span>Close</span>
+          <span>Volume</span>
+        </div>
+
+        @for (row of history(); track row.datetime) {
+          <div class="table-row">
+            <span>{{ row.datetime }}</span>
+            <span>{{ row.open }}</span>
+            <span>{{ row.high }}</span>
+            <span>{{ row.low }}</span>
+            <span>{{ row.close }}</span>
+            <span>{{ row.volume || 'N/A' }}</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-panel">
+        <h3>No history loaded</h3>
+        <p>
+          Search an instrument from Watchlist and open its detail to view historical data.
+        </p>
+      </div>
+    }
+  </section>
+</div>

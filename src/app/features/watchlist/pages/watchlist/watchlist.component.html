@@ -79,10 +79,10 @@
 
         @for (item of watchlist(); track item.symbol) {
           <div class="table-row">
-            <span class="symbol-cell">
+            <a class="symbol-cell symbol-link" [routerLink]="['/instrument', item.symbol]">
               <strong>{{ item.symbol }}</strong>
               <small>{{ item.exchange || 'N/A' }}</small>
-            </span>
+            </a>
 
             <span>{{ item.name }}</span>
 

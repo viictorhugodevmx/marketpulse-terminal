@@ -268,3 +268,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.symbol-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.symbol-link:hover strong {
+  color: #28f7a5;
+}

@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { MarketDataService } from '../../../../core/services/market-data.service';
@@ -8,7 +9,7 @@ import { WatchlistItem } from '../../../../core/models/watchlist.model';
 
 @Component({
   selector: 'app-watchlist',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './watchlist.component.html',
   styleUrl: './watchlist.component.scss',
 })

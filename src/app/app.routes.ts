@@ -6,6 +6,7 @@ import { WatchlistComponent } from './features/watchlist/pages/watchlist/watchli
 import { PortfolioComponent } from './features/portfolio/pages/portfolio/portfolio.component';
 import { RiskCenterComponent } from './features/risk-center/pages/risk-center/risk-center.component';
 import { SettingsComponent } from './features/settings/pages/settings/settings.component';
+import { InstrumentDetailComponent } from './features/instrument/pages/instrument-detail/instrument-detail.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
@@ -27,6 +28,10 @@ export const routes: Routes = [
       {
         path: 'watchlist',
         component: WatchlistComponent,
+      },
+      {
+        path: 'instrument/:symbol',
+        component: InstrumentDetailComponent,
       },
       {
         path: 'portfolio',
